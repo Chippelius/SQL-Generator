@@ -1,0 +1,64 @@
+body {
+  background-color: rgb(255, 255, 255);
+  font: 700 2.25em/1.38 Helvetica;
+  color: rgb(0, 0, 0);
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.container .container {
+  max-width: 800px;
+}
+
+.text {
+  float: left;
+  clear: both;
+  width: 100%;
+  min-height: 16px;
+  padding: 10px;
+  font-size: 0.5em;
+  color: rgb(0, 0, 0);
+}
+
+._textarea {
+  display: block;
+  float: left;
+  clear: both;
+  width: 100%;
+  height: 100px;
+  padding: 5px;
+  border: 2px solid rgb(119, 119, 119);
+  border-radius: 5px;
+  background-color: rgb(242, 242, 242);
+  font-size: 0.444em;
+  font-weight: 400;
+  color: rgb(0, 0, 0);
+  resize: none;
+}
+
+.container-1 {
+  padding: 10px 20px;
+  border-top: 3px solid rgb(90, 90, 90);
+}
+
+._text-1 {
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  border-top: 3px solid rgb(90, 90, 90);
+  font-size: 1em;
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
+
+.container ._text-2 {
+  float: left;
+  width: 100%;
+  padding: 10px;
+  font-size: 0.722em;
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
