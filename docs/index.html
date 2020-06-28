@@ -8,14 +8,35 @@
   <link rel="stylesheet" href="css/index.css">
 </head>
 <body class="body page-index clearfix">
-  <h1 class="separator _text-1">Random SQL Generator</h1>
-  <div class="main separator container container-1 clearfix">
-    <div class="content container clearfix">
+  <h1 class="full-width separator _text-1">Random SQL Generator</h1>
+  <div class="full-width separator default-padding main clearfix">
+    <div class="full-width-max-1000 content clearfix">
       <h2 class="h2 _text-2">Random SELECT Query</h2>
-      <p class="text">Relationenschema:</p>
-      <textarea class="textarea _textarea" name="schema" placeholder="table(_primaryKey_, foreignKey [foreignTable], attribute)
+      <div class="full-width wrapper clearfix">
+        <h3 class="full-width h3 default-padding _text-3">Database schema:</h3>
+        <textarea id="select-schema" class="full-width textarea _textarea _textarea-1" name="schema" placeholder="table(_primaryKey_, foreignKey [foreignTable], attribute)
 foreignTable(_primaryKey_, attribute2)"></textarea>
+      </div>
+      <div class="full-width wrapper wrapper-2 clearfix">
+        <h3 class="full-width h3 default-padding _text-4">FROM Options:</h3>
+        <div class="full-width default-padding wrapper wrapper-3 clearfix">
+          <label class="checkbox-label clearfix">
+            <input id="select-option-from-nested" class="checkbox" type="checkbox">
+            <span class="point-text">FROM: nested queries</span>
+          </label>
+        </div>
+      </div>
+      <div class="full-width wrapper clearfix">
+        <h3 class="full-width h3 default-padding _text-6">Result:</h3>
+        <div class="full-width default-padding wrapper clearfix">
+          <button onClick="window.location='javascript:window.generateSelect()';" class="button _button">Generate</button>
+        </div>
+        <textarea id="select-result" class="full-width textarea _textarea _textarea-2"></textarea>
+      </div>
     </div>
   </div>
+
+  <script src="js/jquery-min.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>
