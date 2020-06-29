@@ -53,15 +53,12 @@
     }
 
 
-    let querySpecification = {
-        select: ['*']
-    }
-
     let JOIN_TYPES = ['JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL OUTER JOIN'];
 
     function RandomSelectQuery(schema, options) {
         let availableAttributes = [];
 
+		//=== FROM ===
         this.from = [];
         let aliases = Object.create(null);
         schema.forEach(table => aliases[table.name] = 1);
@@ -74,8 +71,8 @@
             tableRef.alias = tableRef.table.name.toString().substr(0, 2);
             if (aliases[tableRef.alias]) tableRef.alias += ++aliases[tableRef.alias];
             else aliases[tableRef.alias] = 1;
-
-            if (i > 0) {
+			// JOIN
+            if (i > 0) { //only allow JOINs starting at the second table
                 let referencePairs = [];
                 tableRef.table.attributes.forEach(x => {
                     if (x.referencesTable)
@@ -93,7 +90,6 @@
                     tableRef.on = `${tableRef.alias}.${refPair.x.name} = ${refPair.y.tableRef.alias}.${refPair.y.attribute.name}`
                 }
             }
-
             this.from.push(tableRef);
             tableRef.table.attributes.forEach(x => availableAttributes.push({
                 attribute: x,
@@ -101,13 +97,14 @@
             }));
         }
 
-
-
-        this.select = ['*'];
+		//=== SELECT ===
+		this.select = availableAttributes.filter(x => Math.random() < 0.3);
+		if(this.select.length < 1 || Math.random() < 0.2) {
+        	this.select = availableAttributes;
+		}
 
         this.toString = function() {
-            console.log(this.from);
-            return 'SELECT ' + this.select.join(', ') + '\n' +
+            return 'SELECT ' + (this.select.length < 1 || this.select.length==availableAttributes.length?'*':this.select.reduce(((x,y) => (x?x+', ':'')+`${y.tableRef.alias}.${y.attribute.name}`), null)) + '\n' +
                 'FROM ' + this.from.reduce(((x, y) => (x ? x + (y.join ? `\n\t${y.join} ` : ', \n\t') : '') + y.table.name + ' ' + y.alias + (y.on ? ` ON (${y.on})` : '')), null) + '\n' +
                 (this.where ? 'WHERE ' + this.whereWhere + '\n' : '') +
                 (this.groupBy ? 'GROUP BY ' + this.groupBy.join(', ') + '\n' : '') +
