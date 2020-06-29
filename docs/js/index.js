@@ -55,6 +55,47 @@
 
     let JOIN_TYPES = ['JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL OUTER JOIN'];
 
+	function randomNumericExpression(attrRefs) {
+		if(!attrRefs || attrRefs.length < 1) {
+			return Math.floor(Math.random()*100)/10;
+		} else if(Math.random() < 0.7) {
+			let attr = attrRefs[Math.floor(Math.random()*attrRefs.length)];
+			return `${attr.tableRef.alias}.${attr.attribute.name}`;
+		} else if(Math.random() < 0.7) {
+			return '('+randomNumericExpression(attrRefs) + ') * ('
+				+ randomNumericExpression(attrRefs.filter(x=>Math.random()<0.1))+')';
+		} else {
+			return '('+randomNumericExpression(attrRefs) + ') + ('
+				+ randomNumericExpression(attrRefs.filter(x=>Math.random()<0.1))+')';
+		}
+	}
+	window.randomNumericExpression = randomNumericExpression;
+
+	function randomBooleanExpression(attrRefs) {
+		switch(Math.floor(Math.random()*12)) {
+		case 0:
+		case 1:
+			return 'NOT ('+randomBooleanExpression(attrRefs)+')';
+		case 2:
+		case 3:
+			return '('+randomBooleanExpression(attrRefs)+') AND ('+randomBooleanExpression(attrRefs)+')';
+		case 4:
+		case 5:
+			return '('+randomBooleanExpression(attrRefs)+') OR ('+randomBooleanExpression(attrRefs)+')';
+		case 6:
+			return randomNumericExpression(attrRefs)+' < '+randomNumericExpression(null);
+		case 7:
+			return randomNumericExpression(attrRefs)+' > '+randomNumericExpression(null);
+		case 8:
+			return randomNumericExpression(attrRefs)+' <= '+randomNumericExpression(null);
+		case 9:
+			return randomNumericExpression(attrRefs)+' >= '+randomNumericExpression(null);
+		default:
+			return randomNumericExpression(attrRefs)+' = '+randomNumericExpression(null);
+		}
+	}
+	window.randomBooleanExpression = randomBooleanExpression;
+
     function RandomSelectQuery(schema, options) {
         let availableAttributes = [];
 
@@ -97,6 +138,9 @@
             }));
         }
 
+		//=== WHERE ===
+		this.where = randomBooleanExpression(availableAttributes.filter(x => !x.attribute.referencesTable));
+
 		//=== SELECT ===
 		this.select = availableAttributes.filter(x => Math.random() < 0.3);
 		if(this.select.length < 1 || Math.random() < 0.2) {
@@ -106,7 +150,7 @@
         this.toString = function() {
             return 'SELECT ' + (this.select.length < 1 || this.select.length==availableAttributes.length?'*':this.select.reduce(((x,y) => (x?x+', ':'')+`${y.tableRef.alias}.${y.attribute.name}`), null)) + '\n' +
                 'FROM ' + this.from.reduce(((x, y) => (x ? x + (y.join ? `\n\t${y.join} ` : ', \n\t') : '') + y.table.name + ' ' + y.alias + (y.on ? ` ON (${y.on})` : '')), null) + '\n' +
-                (this.where ? 'WHERE ' + this.whereWhere + '\n' : '') +
+                (this.where ? 'WHERE ' + this.where + '\n' : '') +
                 (this.groupBy ? 'GROUP BY ' + this.groupBy.join(', ') + '\n' : '') +
                 (this.havingClause ? 'HAVING ' + this.havingClause + '\n' : '') +
                 (this.orderBy ? 'ORDER BY ' + this.orderBy + '\n' : '');
