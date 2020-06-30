@@ -179,6 +179,16 @@
 			}
 		}
 
+		//=== ORDER BY ===
+		if(Math.random() < 0.2) {
+			this.orderBy = availableAttributes.filter(x => Math.random() < 0.1).map(x => x.name);
+			if(this.orderBy.length > 0) {
+				this.order = Math.random() < 0.5 ? 'ASC' : 'DESC';
+			} else {
+				this.orderBy = null;
+			}
+		}
+
         //=== SELECT ===
         this.select = [];
         if (Math.random() < 0.8) {
@@ -224,7 +234,7 @@
                 (this.where ? 'WHERE ' + this.where + '\n' : '') +
                 (this.groupBy ? 'GROUP BY ' + this.groupBy.join(', ') + '\n' : '') +
                 (this.having ? 'HAVING ' + this.having + '\n' : '') +
-                (this.orderBy ? 'ORDER BY ' + this.orderBy + '\n' : '');
+                (this.orderBy ? 'ORDER BY ' + this.orderBy.join(', ') + ' ' + this.order + '\n' : '');
         }
     }
 
