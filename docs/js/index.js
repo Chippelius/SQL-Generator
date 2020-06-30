@@ -155,6 +155,30 @@
         if (Math.random() < 0.5)
             this.where = randomBooleanExpression(availableAttributes.filter(x => !x.referencesTable && !x.keyCandidate).map(x => x.name));
 
+		//=== GROUP BY & HAVING ===
+		if(Math.random() < 0.4) {
+			this.groupBy = availableAttributes.filter(x => Math.random() < 0.1);
+			if(this.groupBy.length > 0) {
+				//=== HAVING ===
+				if(this.groupBy && Math.random() < 0.5) {
+					let attributes = [];
+					availableAttributes.forEach(x => {
+						if(this.groupBy.includes(x) && Math.random() < 0.2) {
+							attributes.push(x.name);
+						} else if(Math.random() < 0.3) {
+							attributes.push(randomAggregation(x.name));
+						}
+					});
+					if(attributes.length > 0)
+						this.having = randomBooleanExpression(attributes);
+				}
+				availableAttributes = this.groupBy;
+				this.groupBy = this.groupBy.map(x => x.name);
+			} else {
+				this.groupBy = null;
+			}
+		}
+
         //=== SELECT ===
         this.select = [];
         if (Math.random() < 0.8) {
@@ -199,7 +223,7 @@
                 'FROM ' + this.from.reduce(((x, y) => (x ? x + (y.join ? `\n\t${y.join} ` : ', \n\t') : '') + y.name + ' ' + y.alias + (y.on ? ` ON (${y.on})` : '')), null) + '\n' +
                 (this.where ? 'WHERE ' + this.where + '\n' : '') +
                 (this.groupBy ? 'GROUP BY ' + this.groupBy.join(', ') + '\n' : '') +
-                (this.havingClause ? 'HAVING ' + this.havingClause + '\n' : '') +
+                (this.having ? 'HAVING ' + this.having + '\n' : '') +
                 (this.orderBy ? 'ORDER BY ' + this.orderBy + '\n' : '');
         }
     }
